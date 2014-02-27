@@ -15,4 +15,13 @@ public class ToastExceptions {
     	toast.show();
 	}
 	
+	
+	
+	
+	public static void onShowException(Context context, String message)
+	{
+		ToastExceptions notValid = new ToastExceptions(context);
+		notValid.showToast(message);
+	}
+	
 }

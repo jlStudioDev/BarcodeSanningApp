@@ -20,26 +20,31 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.os.AsyncTask;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.io.BufferedInputStream;
 import java.net.URL;
 import java.net.URLConnection;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import utility.GoogleApiConverter;
 import android.net.Uri;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import Service.HttpServices;
 import Exceptions.ToastExceptions;
 //
@@ -53,7 +58,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	private ImageView thumbView;
 	private ImageView[] starViews;
 	private Bitmap thumbImg;
-
+	
 	//On initialise the app
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +88,17 @@ public class MainActivity extends Activity implements OnClickListener{
 			starViews[s] = new ImageView(this);
 		}
 	}
-
+	
+	//button interaction
 	public void onClick(View v){
 		//Conditional check for buttons
 		if(v.getId()==R.id.scan_button){
-			IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-			scanIntegrator.initiateScan();
+			//todo: test roll back 
+			//IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+			//scanIntegrator.initiateScan();
+			
+			//todo: test need delete
+			constructSearchingQueryIfScanIsValid();
 		}else if(v.getId()== R.id.link_btn)
 		{
 			String tag = (String)v.getTag();
@@ -98,40 +108,37 @@ public class MainActivity extends Activity implements OnClickListener{
 		}
 	}
 
-
+	//scanned results here    
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		//retrieve result of scanning - instantiate ZXing object
 		IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-		//check we have a valid result
 		if (scanningResult != null) {
-			constructSearchingQueryIfScanIsValid(scanningResult);
+			//todo: test roll back 
+			//constructSearchingQueryIfScanIsValid(scanningResult);
 		}
 		else{
-			ToastExceptions notValid = new ToastExceptions(this);
-			notValid.showToast("No book scan data received!");
+			ToastExceptions.onShowException(this, "o book scan data received!");
 		}
 	}
-
-	private void constructSearchingQueryIfScanIsValid(IntentResult scanningResult){
-		//get content from Intent Result
-		String scanContent = scanningResult.getContents();
-		//get format name of data scanned
-		String scanFormat = scanningResult.getFormatName();
-		Log.v("SCAN", "content: "+scanContent+" - format: "+scanFormat);
-
-		if(scanContent!=null && scanFormat!=null && scanFormat.equalsIgnoreCase("EAN_13")){
-			//book search
-			String bookSearchString = "https://www.googleapis.com/books/v1/volumes?"+
-					"q=isbn:"+scanContent+"&key=AIzaSyCzgfug-6x5_JcsbKFCC684YYu6feLtGvg";
-
+	
+	//constructing searching query through google api 
+	//todo: test roll back: @param: IntentResult scanningResult" 
+	private void constructSearchingQueryIfScanIsValid(){
+		//todo: test roll back 
+		//String scanContent = scanningResult.getContents();
+		//String scanFormat = scanningResult.getFormatName();
+		
+		//todo: test need delete
+		String scanContent = "9781430247883";
+		String scanFormat = "EAN_13";
+		if(GoogleApiConverter.isScanFormatMatching(scanContent, scanFormat)){
+			String bookSearchString =  GoogleApiConverter.formateBookApiSearchQuery(scanContent);
 			new GetBookInfo().execute(bookSearchString);
 		}
 		else{
-			ToastExceptions notValid = new ToastExceptions(this);
-			notValid.showToast("Not a valid scan!");
+			ToastExceptions.onShowException(this, "Not a valid scan!");
 		}
 	}
-
+	
 	//fetch book info
 	private class GetBookInfo extends AsyncTask<String, Void, String> {
 
@@ -267,6 +274,4 @@ public class MainActivity extends Activity implements OnClickListener{
 			thumbView.setImageBitmap(thumbImg);
 		}
 	}
-
-
 }

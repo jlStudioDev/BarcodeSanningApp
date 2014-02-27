@@ -1,8 +1,12 @@
 package Service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -34,7 +38,7 @@ public class HttpServices{
 				HttpResponse bookResponse = bookClient.execute(bookGet);
 
 				StatusLine bookSearchStatus = bookResponse.getStatusLine();
-				if (bookSearchStatus.getStatusCode()== successCode) 
+				if (bookSearchStatus.getStatusCode() == successCode) 
 				{
 					//we have a result
 					HttpEntity bookEntity = bookResponse.getEntity();
@@ -55,5 +59,5 @@ public class HttpServices{
 			}
 		}
 		return bookBuilder;
-	}
+	}	
 }
