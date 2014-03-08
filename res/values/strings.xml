@@ -9,4 +9,9 @@
     <string name="link">Web</string>
     <string name="thumb">Book thumbnail</string>
 
+    
+    
+    
+    <!-- color  -->
+    <color name="white">#0e4878</color>
 </resources>

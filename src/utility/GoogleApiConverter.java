@@ -15,5 +15,4 @@ public class GoogleApiConverter {
 	{
 		return scanContent!=null && scanFormat!=null && scanFormat.equalsIgnoreCase("EAN_13");
 	}
-
 }
